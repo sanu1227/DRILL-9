@@ -10,7 +10,7 @@ def main():
     import pico2d as p2
 
     p2.open_canvas()
-    grass = p2.load_image(str(ASSET_DIR / 'grass.png'))
+    tuk_ground = p2.load_image(str(ASSET_DIR / 'TUK_GROUND.png'))
     character = p2.load_image(str(ASSET_DIR / 'animation_sheet.png'))
     running = True
     x = 800 // 2
@@ -32,7 +32,7 @@ def main():
     while running:
         handle_events()
         p2.clear_canvas()
-        grass.draw(400, 30)
+        tuk_ground.draw(400, 300, 800, 600)
         character.clip_draw(frame * 100, 100, 100, 100, x, 90)
         p2.update_canvas()
         frame = (frame + 1) % 8
