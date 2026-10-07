@@ -8,6 +8,7 @@ from time import perf_counter
 
 TUK_WIDTH, TUK_HEIGHT = 1280, 1024
 MOVE_SPEED = 200.0
+MAX_DELTA = 0.05
 
 ASSET_DIR = Path(__file__).resolve().parent
 
@@ -22,6 +23,7 @@ class Boy:
     moving: bool = False
 
     def update(self, dt):
+        dt = max(0.0, min(dt, MAX_DELTA))
         dx = int('right' in self.keys) - int('left' in self.keys)
         dy = int('up' in self.keys) - int('down' in self.keys)
         self.moving = bool(dx or dy)
