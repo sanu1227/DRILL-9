@@ -46,6 +46,36 @@ class Drill9Checks(unittest.TestCase):
             other.update(0.01)
         self.assertAlmostEqual(other.x, start_x + 200)
 
+    def test_idle_run_animation_lifecycle(self):
+        boy = Boy()
+        self.assertEqual(boy.sprite_row, 3)
+        boy.update(0.05)
+        self.assertEqual(boy.frame, 0)
+        boy.update(0.05)
+        self.assertEqual(boy.frame, 1)
+        for _ in range(14):
+            boy.update(0.05)
+        self.assertEqual(boy.frame, 0)
+        boy.keys.add('right')
+        boy.update(0.05)
+        self.assertEqual((boy.sprite_row, boy.frame), (1, 0))
+        for _ in range(20):
+            boy.keys.add('right')  # 반복 KEYDOWN은 집합을 변경하지 않는다.
+            boy.update(0.01)
+        self.assertEqual(boy.frame, 2)
+        boy.keys = {'left'}
+        boy.update(0.01)
+        self.assertEqual((boy.sprite_row, boy.frame), (0, 0))
+        boy.keys.clear()
+        boy.update(0.01)
+        self.assertEqual((boy.sprite_row, boy.frame), (2, 0))
+        boy.keys = {'up'}
+        boy.update(0.01)
+        self.assertEqual(boy.sprite_row, 0)
+        boy.keys = {'up', 'down'}
+        boy.update(0.01)
+        self.assertEqual(boy.sprite_row, 2)
+
 
 if __name__ == '__main__':
     unittest.main()
