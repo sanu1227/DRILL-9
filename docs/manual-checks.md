@@ -22,10 +22,6 @@ F5 실행은 `.vscode/launch.json`의 `Drill 9 방향키 이동`을 선택합니
 - Escape와 창 닫기 버튼으로 각각 정상 종료되어야 합니다.
 - 저장소 루트와 `DRILL_09` 폴더에서 각각 실행해도 이미지가 로드되어야 합니다.
 
-## 자동 검증
-```powershell
-python -m unittest discover -s tests -v
-python -m py_compile DRILL_09/move_character_with_key.py tests/test_drill9.py
-```
-자동 검사는 모델과 메인 루프의 입력 연결을 확인합니다. 가짜 화면 검사는 실제 이미지 렌더링의 증거가 아닙니다.
-실제 확인 결과는 `verification.md`에 기록합니다.
+## 검증 기록
+기존 자동 검사 결과는 `verification.md`에 기록되어 있습니다.
+사용자 요청에 따라 자동 검사 Python 파일은 삭제했으며 실행 파일 하나만 유지합니다.

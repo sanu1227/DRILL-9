@@ -12,7 +12,7 @@ python DRILL_09/move_character_with_key.py
 ```
 
 방향키로 이동하고 Escape로 종료합니다. 창 닫기 버튼으로도 종료할 수 있습니다.
-기존 마우스 이동 및 자동 달리기 파일은 별도 수업 예제입니다.
+실행용 Python 파일은 `DRILL_09/move_character_with_key.py` 하나만 유지합니다.
 
 ## 제출
 
@@ -21,9 +21,5 @@ python DRILL_09/move_character_with_key.py
 제출 URL: https://github.com/sanu1227/DRILL-9.git
 
 ## 검증
-
-```powershell
-python -m unittest discover -s tests -v
-```
 
 화면과 입력의 수동 검사 순서는 [실제 창 검증 절차](docs/manual-checks.md)에 있습니다.
