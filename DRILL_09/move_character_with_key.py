@@ -15,10 +15,13 @@ class Boy:
     y: float = TUK_HEIGHT / 2
     keys: set[str] = field(default_factory=set)
     frame: int = 0
+    facing: str = 'right'
 
     def update(self):
         dx = int('right' in self.keys) - int('left' in self.keys)
         dy = int('up' in self.keys) - int('down' in self.keys)
+        if dx:
+            self.facing = 'right' if dx > 0 else 'left'
         self.x += dx * 10
         self.y += dy * 10
 
@@ -54,7 +57,7 @@ def main():
         boy.update()
         p2.clear_canvas()
         tuk_ground.draw(TUK_WIDTH // 2, TUK_HEIGHT // 2)
-        character.clip_draw(boy.frame * 100, 100, 100, 100, boy.x, boy.y)
+        character.clip_draw(boy.frame * 100, 100 if boy.facing == 'right' else 0, 100, 100, boy.x, boy.y)
         p2.update_canvas()
         boy.frame = (boy.frame + 1) % 8
         p2.delay(0.05)
