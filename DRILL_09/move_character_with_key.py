@@ -58,42 +58,46 @@ def main():
     import pico2d as p2
 
     p2.open_canvas(TUK_WIDTH, TUK_HEIGHT)
-    tuk_ground = p2.load_image(str(ASSET_DIR / 'TUK_GROUND.png'))
-    character = p2.load_image(str(ASSET_DIR / 'animation_sheet.png'))
-    running = True
-    boy = Boy()
-    key_names = {
-        p2.SDLK_RIGHT: 'right', p2.SDLK_LEFT: 'left',
-        p2.SDLK_UP: 'up', p2.SDLK_DOWN: 'down',
-    }
+    try:
+        tuk_ground = p2.load_image(str(ASSET_DIR / 'TUK_GROUND.png'))
+        character = p2.load_image(str(ASSET_DIR / 'animation_sheet.png'))
+        running = True
+        boy = Boy()
+        key_names = {
+            p2.SDLK_RIGHT: 'right', p2.SDLK_LEFT: 'left',
+            p2.SDLK_UP: 'up', p2.SDLK_DOWN: 'down',
+        }
 
-    def handle_events():
-        nonlocal running
-        for event in p2.get_events():
-            if event.type == p2.SDL_QUIT:
-                running = False
-            elif event.type == p2.SDL_KEYDOWN:
-                if event.key == p2.SDLK_ESCAPE:
+        def handle_events():
+            nonlocal running
+            for event in p2.get_events():
+                if event.type == p2.SDL_QUIT:
                     running = False
-                elif event.key in key_names:
-                    boy.keys.add(key_names[event.key])
-            elif event.type == p2.SDL_KEYUP and event.key in key_names:
-                boy.keys.discard(key_names[event.key])
+                elif event.type == p2.SDL_KEYDOWN:
+                    if event.key == p2.SDLK_ESCAPE:
+                        running = False
+                    elif event.key in key_names:
+                        boy.keys.add(key_names[event.key])
+                elif event.type == p2.SDL_KEYUP and event.key in key_names:
+                    boy.keys.discard(key_names[event.key])
 
-    previous_time = perf_counter()
-    while running:
-        handle_events()
-        current_time = perf_counter()
-        if not p2.SDL_GetKeyboardFocus():
-            boy.keys.clear()
-        boy.update(current_time - previous_time)
-        previous_time = current_time
-        p2.clear_canvas()
-        tuk_ground.draw(TUK_WIDTH // 2, TUK_HEIGHT // 2)
-        character.clip_draw(boy.frame * 100, boy.sprite_row * 100, 100, 100, boy.x, boy.y)
-        p2.update_canvas()
-        p2.delay(0.005)
-    p2.close_canvas()
+        previous_time = perf_counter()
+        while running:
+            handle_events()
+            if not running:
+                break
+            current_time = perf_counter()
+            if not p2.SDL_GetKeyboardFocus():
+                boy.keys.clear()
+            boy.update(current_time - previous_time)
+            previous_time = current_time
+            p2.clear_canvas()
+            tuk_ground.draw(TUK_WIDTH // 2, TUK_HEIGHT // 2)
+            character.clip_draw(boy.frame * 100, boy.sprite_row * 100, 100, 100, boy.x, boy.y)
+            p2.update_canvas()
+            p2.delay(0.005)
+    finally:
+        p2.close_canvas()
 
 
 if __name__ == '__main__':
