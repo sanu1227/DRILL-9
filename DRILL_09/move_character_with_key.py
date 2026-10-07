@@ -6,6 +6,7 @@ from pathlib import Path
 from math import hypot
 
 TUK_WIDTH, TUK_HEIGHT = 1280, 1024
+MOVE_SPEED = 200.0
 
 ASSET_DIR = Path(__file__).resolve().parent
 
@@ -19,7 +20,7 @@ class Boy:
     facing: str = 'right'
     moving: bool = False
 
-    def update(self):
+    def update(self, dt):
         dx = int('right' in self.keys) - int('left' in self.keys)
         dy = int('up' in self.keys) - int('down' in self.keys)
         self.moving = bool(dx or dy)
@@ -28,8 +29,8 @@ class Boy:
         length = hypot(dx, dy)
         if length:
             dx, dy = dx / length, dy / length
-        self.x = max(50, min(TUK_WIDTH - 50, self.x + dx * 10))
-        self.y = max(50, min(TUK_HEIGHT - 50, self.y + dy * 10))
+        self.x = max(50, min(TUK_WIDTH - 50, self.x + dx * MOVE_SPEED * dt))
+        self.y = max(50, min(TUK_HEIGHT - 50, self.y + dy * MOVE_SPEED * dt))
 
 
     @property
@@ -66,7 +67,7 @@ def main():
 
     while running:
         handle_events()
-        boy.update()
+        boy.update(0.05)
         p2.clear_canvas()
         tuk_ground.draw(TUK_WIDTH // 2, TUK_HEIGHT // 2)
         character.clip_draw(boy.frame * 100, boy.sprite_row * 100, 100, 100, boy.x, boy.y)
