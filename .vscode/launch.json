@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Drill 9 방향키 이동",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/DRILL_09/move_character_with_key.py",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    }
+  ]
+}
