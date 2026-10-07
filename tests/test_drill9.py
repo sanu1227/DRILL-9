@@ -76,6 +76,31 @@ class Drill9Checks(unittest.TestCase):
         boy.update(0.01)
         self.assertEqual(boy.sprite_row, 2)
 
+    def test_boundaries_and_time_guards(self):
+        for keys, expected in (
+            ({'left', 'down'}, (HALF_SIZE, HALF_SIZE)),
+            ({'left', 'up'}, (HALF_SIZE, TUK_HEIGHT - HALF_SIZE)),
+            ({'right', 'down'}, (TUK_WIDTH - HALF_SIZE, HALF_SIZE)),
+            ({'right', 'up'}, (TUK_WIDTH - HALF_SIZE, TUK_HEIGHT - HALF_SIZE)),
+        ):
+            with self.subTest(keys=keys):
+                boy = Boy(keys=keys)
+                for _ in range(200):
+                    boy.update(0.05)
+                self.assertEqual((boy.x, boy.y), expected)
+                boy.update(0.05)
+                self.assertEqual((boy.x, boy.y), expected)
+                self.assertTrue(boy.moving)
+                boy.keys.clear()
+                boy.update(0.05)
+                self.assertFalse(boy.moving)
+        boy = Boy(keys={'right'})
+        x = boy.x
+        boy.update(100)
+        self.assertEqual(boy.x, x + 10)
+        boy.update(-1)
+        self.assertEqual(boy.x, x + 10)
+
 
 if __name__ == '__main__':
     unittest.main()
