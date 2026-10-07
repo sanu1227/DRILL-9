@@ -1,0 +1,51 @@
+"""실행: python -m unittest discover -s tests -v (창을 열지 않음)."""
+
+from math import hypot
+from pathlib import Path
+import sys
+import unittest
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'DRILL_09'))
+from move_character_with_key import Boy, TUK_WIDTH, TUK_HEIGHT, HALF_SIZE
+
+
+class Drill9Checks(unittest.TestCase):
+    def test_direction_key_sequence(self):
+        boy = Boy()
+        start_x, start_y = boy.x, boy.y
+        boy.keys.add('right')
+        for _ in range(20):
+            boy.update(0.05)
+        self.assertAlmostEqual(boy.x, start_x + 200)
+        self.assertEqual(boy.y, start_y)
+        boy.keys.add('left')
+        boy.update(0.05)
+        self.assertFalse(boy.moving)
+        self.assertEqual(boy.x, start_x + 200)
+        boy.keys.discard('right')
+        boy.update(0.05)
+        self.assertEqual(boy.x, start_x + 190)
+        self.assertEqual(boy.facing, 'left')
+        boy.keys = {'up'}
+        boy.update(0.05)
+        self.assertEqual(boy.y, start_y + 10)
+        self.assertEqual(boy.facing, 'left')
+        boy.keys = {'down'}
+        boy.update(0.05)
+        self.assertEqual(boy.y, start_y)
+        boy.keys.clear()
+        boy.update(0.05)
+        self.assertFalse(boy.moving)
+        self.assertEqual(boy.x, start_x + 190)
+        boy.keys = {'up', 'right'}
+        x, y = boy.x, boy.y
+        boy.update(0.05)
+        self.assertAlmostEqual(hypot(boy.x - x, boy.y - y), 10)
+        other = Boy(keys={'right'})
+        for _ in range(100):
+            other.update(0.01)
+        self.assertAlmostEqual(other.x, start_x + 200)
+
+
+if __name__ == '__main__':
+    unittest.main()
