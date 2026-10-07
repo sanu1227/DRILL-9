@@ -3,17 +3,19 @@
 
 from pathlib import Path
 
+TUK_WIDTH, TUK_HEIGHT = 1280, 1024
+
 ASSET_DIR = Path(__file__).resolve().parent
 
 
 def main():
     import pico2d as p2
 
-    p2.open_canvas()
+    p2.open_canvas(TUK_WIDTH, TUK_HEIGHT)
     tuk_ground = p2.load_image(str(ASSET_DIR / 'TUK_GROUND.png'))
     character = p2.load_image(str(ASSET_DIR / 'animation_sheet.png'))
     running = True
-    x = 800 // 2
+    x, y = TUK_WIDTH // 2, TUK_HEIGHT // 2
     frame = 0
 
     def handle_events():
@@ -32,8 +34,8 @@ def main():
     while running:
         handle_events()
         p2.clear_canvas()
-        tuk_ground.draw(400, 300, 800, 600)
-        character.clip_draw(frame * 100, 100, 100, 100, x, 90)
+        tuk_ground.draw(TUK_WIDTH // 2, TUK_HEIGHT // 2)
+        character.clip_draw(frame * 100, 100, 100, 100, x, y)
         p2.update_canvas()
         frame = (frame + 1) % 8
         p2.delay(0.05)
