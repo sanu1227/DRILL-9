@@ -27,6 +27,7 @@ class Boy:
 
     def update(self, dt):
         dt = max(0.0, min(dt, MAX_DELTA))
+        previous_state = (self.moving, self.facing)
         dx = int('right' in self.keys) - int('left' in self.keys)
         dy = int('up' in self.keys) - int('down' in self.keys)
         self.moving = bool(dx or dy)
@@ -38,10 +39,14 @@ class Boy:
         self.x = max(50, min(TUK_WIDTH - 50, self.x + dx * MOVE_SPEED * dt))
         self.y = max(50, min(TUK_HEIGHT - 50, self.y + dy * MOVE_SPEED * dt))
 
-        self.animation_time += dt
-        while self.animation_time + 1e-12 >= FRAME_INTERVAL:
-            self.animation_time = max(0.0, self.animation_time - FRAME_INTERVAL)
-            self.frame = (self.frame + 1) % FRAME_COUNT
+        if previous_state != (self.moving, self.facing):
+            self.frame = 0
+            self.animation_time = 0.0
+        else:
+            self.animation_time += dt
+            while self.animation_time + 1e-12 >= FRAME_INTERVAL:
+                self.animation_time = max(0.0, self.animation_time - FRAME_INTERVAL)
+                self.frame = (self.frame + 1) % FRAME_COUNT
 
     @property
     def sprite_row(self):
