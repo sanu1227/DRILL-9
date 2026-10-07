@@ -57,6 +57,11 @@ class Boy:
 def main():
     import pico2d as p2
 
+    for filename in ('TUK_GROUND.png', 'animation_sheet.png'):
+        path = ASSET_DIR / filename
+        if not path.is_file():
+            raise FileNotFoundError(f'필수 과제 이미지를 찾을 수 없습니다: {path}')
+
     p2.open_canvas(TUK_WIDTH, TUK_HEIGHT)
     try:
         tuk_ground = p2.load_image(str(ASSET_DIR / 'TUK_GROUND.png'))
