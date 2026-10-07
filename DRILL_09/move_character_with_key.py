@@ -24,7 +24,7 @@ class Boy:
         self.moving = bool(dx or dy)
         if dx:
             self.facing = 'right' if dx > 0 else 'left'
-        self.x += dx * 10
+        self.x = max(50, min(TUK_WIDTH - 50, self.x + dx * 10))
         self.y += dy * 10
 
 
