@@ -4,6 +4,7 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 from math import hypot
+from time import perf_counter
 
 TUK_WIDTH, TUK_HEIGHT = 1280, 1024
 MOVE_SPEED = 200.0
@@ -65,9 +66,12 @@ def main():
             elif event.type == p2.SDL_KEYUP and event.key in key_names:
                 boy.keys.discard(key_names[event.key])
 
+    previous_time = perf_counter()
     while running:
         handle_events()
-        boy.update(0.05)
+        current_time = perf_counter()
+        boy.update(current_time - previous_time)
+        previous_time = current_time
         p2.clear_canvas()
         tuk_ground.draw(TUK_WIDTH // 2, TUK_HEIGHT // 2)
         character.clip_draw(boy.frame * 100, boy.sprite_row * 100, 100, 100, boy.x, boy.y)
