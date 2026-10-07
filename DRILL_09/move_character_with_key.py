@@ -1,11 +1,24 @@
 """Drill #9: 방향키로 소년을 이동시키는 Pico2D 예제."""
 
 
+from dataclasses import dataclass, field
 from pathlib import Path
 
 TUK_WIDTH, TUK_HEIGHT = 1280, 1024
 
 ASSET_DIR = Path(__file__).resolve().parent
+
+
+@dataclass
+class Boy:
+    x: float = TUK_WIDTH / 2
+    y: float = TUK_HEIGHT / 2
+    keys: set[str] = field(default_factory=set)
+    frame: int = 0
+
+    def update(self):
+        dx = int('right' in self.keys) - int('left' in self.keys)
+        self.x += dx * 10
 
 
 def main():
@@ -15,29 +28,30 @@ def main():
     tuk_ground = p2.load_image(str(ASSET_DIR / 'TUK_GROUND.png'))
     character = p2.load_image(str(ASSET_DIR / 'animation_sheet.png'))
     running = True
-    x, y = TUK_WIDTH // 2, TUK_HEIGHT // 2
-    frame = 0
+    boy = Boy()
+    key_names = {p2.SDLK_RIGHT: 'right', p2.SDLK_LEFT: 'left'}
 
     def handle_events():
-        nonlocal running, x
+        nonlocal running
         for event in p2.get_events():
             if event.type == p2.SDL_QUIT:
                 running = False
             elif event.type == p2.SDL_KEYDOWN:
-                if event.key == p2.SDLK_RIGHT:
-                    x += 10
-                elif event.key == p2.SDLK_LEFT:
-                    x -= 10
-                elif event.key == p2.SDLK_ESCAPE:
+                if event.key == p2.SDLK_ESCAPE:
                     running = False
+                elif event.key in key_names:
+                    boy.keys.add(key_names[event.key])
+            elif event.type == p2.SDL_KEYUP and event.key in key_names:
+                boy.keys.discard(key_names[event.key])
 
     while running:
         handle_events()
+        boy.update()
         p2.clear_canvas()
         tuk_ground.draw(TUK_WIDTH // 2, TUK_HEIGHT // 2)
-        character.clip_draw(frame * 100, 100, 100, 100, x, y)
+        character.clip_draw(boy.frame * 100, 100, 100, 100, boy.x, boy.y)
         p2.update_canvas()
-        frame = (frame + 1) % 8
+        boy.frame = (boy.frame + 1) % 8
         p2.delay(0.05)
     p2.close_canvas()
 
