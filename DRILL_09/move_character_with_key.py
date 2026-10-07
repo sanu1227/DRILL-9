@@ -1,43 +1,39 @@
-from pico2d import *
+"""Drill #9: 방향키로 소년을 이동시키는 Pico2D 예제."""
 
 
-open_canvas()
-grass = load_image('grass.png')
-character = load_image('animation_sheet.png')
+def main():
+    import pico2d as p2
+
+    p2.open_canvas()
+    grass = p2.load_image('grass.png')
+    character = p2.load_image('animation_sheet.png')
+    running = True
+    x = 800 // 2
+    frame = 0
+
+    def handle_events():
+        nonlocal running, x
+        for event in p2.get_events():
+            if event.type == p2.SDL_QUIT:
+                running = False
+            elif event.type == p2.SDL_KEYDOWN:
+                if event.key == p2.SDLK_RIGHT:
+                    x += 10
+                elif event.key == p2.SDLK_LEFT:
+                    x -= 10
+                elif event.key == p2.SDLK_ESCAPE:
+                    running = False
+
+    while running:
+        handle_events()
+        p2.clear_canvas()
+        grass.draw(400, 30)
+        character.clip_draw(frame * 100, 100, 100, 100, x, 90)
+        p2.update_canvas()
+        frame = (frame + 1) % 8
+        p2.delay(0.05)
+    p2.close_canvas()
 
 
-def handle_events():
-    global running
-    global x    
-
-    # fill here
-    events = get_events()
-    for event in events:
-        if event.type == SDL_QUIT:
-            running = False
-        # fill here
-        elif event.type == SDL_KEYDOWN:
-            if event.key == SDLK_RIGHT:
-                x += 10
-            elif event.key == SDLK_LEFT:
-                x -= 10
-            elif event.key == SDLK_ESCAPE:
-                running = False 
-
-running = True
-x = 800 // 2
-frame = 0
-
-# fill here
-
-while running:
-    clear_canvas()
-    grass.draw(400, 30)
-    character.clip_draw(frame * 100, 100, 100, 100, x, 90)
-    update_canvas()
-    handle_events()
-    frame = (frame + 1) % 8
-    delay(0.05)
-
-close_canvas()
-
+if __name__ == '__main__':
+    main()
