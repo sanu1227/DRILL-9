@@ -1,0 +1,6 @@
+# Python 실행 및 검증 결과
+__pycache__/
+*.py[cod]
+.venv/
+# 로컬 실행 로그
+*.log
