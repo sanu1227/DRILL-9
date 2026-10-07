@@ -3,6 +3,7 @@
 
 from dataclasses import dataclass, field
 from pathlib import Path
+from math import hypot
 
 TUK_WIDTH, TUK_HEIGHT = 1280, 1024
 
@@ -24,6 +25,9 @@ class Boy:
         self.moving = bool(dx or dy)
         if dx:
             self.facing = 'right' if dx > 0 else 'left'
+        length = hypot(dx, dy)
+        if length:
+            dx, dy = dx / length, dy / length
         self.x = max(50, min(TUK_WIDTH - 50, self.x + dx * 10))
         self.y = max(50, min(TUK_HEIGHT - 50, self.y + dy * 10))
 
