@@ -9,6 +9,8 @@ from time import perf_counter
 TUK_WIDTH, TUK_HEIGHT = 1280, 1024
 MOVE_SPEED = 200.0
 MAX_DELTA = 0.05
+FRAME_INTERVAL = 0.1
+FRAME_COUNT = 8
 
 ASSET_DIR = Path(__file__).resolve().parent
 
@@ -21,6 +23,7 @@ class Boy:
     frame: int = 0
     facing: str = 'right'
     moving: bool = False
+    animation_time: float = 0.0
 
     def update(self, dt):
         dt = max(0.0, min(dt, MAX_DELTA))
@@ -35,6 +38,10 @@ class Boy:
         self.x = max(50, min(TUK_WIDTH - 50, self.x + dx * MOVE_SPEED * dt))
         self.y = max(50, min(TUK_HEIGHT - 50, self.y + dy * MOVE_SPEED * dt))
 
+        self.animation_time += dt
+        while self.animation_time + 1e-12 >= FRAME_INTERVAL:
+            self.animation_time = max(0.0, self.animation_time - FRAME_INTERVAL)
+            self.frame = (self.frame + 1) % FRAME_COUNT
 
     @property
     def sprite_row(self):
@@ -78,8 +85,7 @@ def main():
         tuk_ground.draw(TUK_WIDTH // 2, TUK_HEIGHT // 2)
         character.clip_draw(boy.frame * 100, boy.sprite_row * 100, 100, 100, boy.x, boy.y)
         p2.update_canvas()
-        boy.frame = (boy.frame + 1) % 8
-        p2.delay(0.05)
+        p2.delay(0.005)
     p2.close_canvas()
 
 
