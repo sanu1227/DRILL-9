@@ -1,12 +1,17 @@
 """Drill #9: 방향키로 소년을 이동시키는 Pico2D 예제."""
 
 
+from pathlib import Path
+
+ASSET_DIR = Path(__file__).resolve().parent
+
+
 def main():
     import pico2d as p2
 
     p2.open_canvas()
-    grass = p2.load_image('grass.png')
-    character = p2.load_image('animation_sheet.png')
+    grass = p2.load_image(str(ASSET_DIR / 'grass.png'))
+    character = p2.load_image(str(ASSET_DIR / 'animation_sheet.png'))
     running = True
     x = 800 // 2
     frame = 0
