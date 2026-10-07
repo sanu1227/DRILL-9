@@ -4,8 +4,11 @@ from math import hypot
 from pathlib import Path
 import sys
 import unittest
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'DRILL_09'))
+import move_character_with_key as app
 from move_character_with_key import Boy, TUK_WIDTH, TUK_HEIGHT, HALF_SIZE
 
 
@@ -100,6 +103,49 @@ class Drill9Checks(unittest.TestCase):
         self.assertEqual(boy.x, x + 10)
         boy.update(-1)
         self.assertEqual(boy.x, x + 10)
+
+    def test_main_event_wiring_and_cleanup(self):
+        # 가짜 화면은 입력 연결과 자원 정리만 검사한다. 실제 렌더링은 별도 확인한다.
+        image = Mock()
+        event = lambda kind, key=None: SimpleNamespace(type=kind, key=key)
+        fake = SimpleNamespace(
+            SDL_QUIT=0, SDL_KEYDOWN=1, SDL_KEYUP=2,
+            SDLK_RIGHT=10, SDLK_LEFT=11, SDLK_UP=12, SDLK_DOWN=13, SDLK_ESCAPE=14,
+            open_canvas=Mock(), close_canvas=Mock(), load_image=Mock(return_value=image),
+            clear_canvas=Mock(), update_canvas=Mock(), delay=Mock(),
+            SDL_GetKeyboardFocus=Mock(side_effect=[1, 1, 1, 1, 1, 0]),
+            get_events=Mock(side_effect=[
+                [event(1, 10)], [], [event(1, 12)], [event(2, 10)],
+                [event(1, 11), event(2, 12)], [], [event(0)],
+            ]),
+        )
+        with patch.dict(sys.modules, {'pico2d': fake}), patch.object(
+            app, 'perf_counter', side_effect=[i / 100 for i in range(20)]
+        ):
+            app.main()
+        draws = [call.args for call in image.clip_draw.call_args_list]
+        self.assertEqual([draw[1] for draw in draws], [100, 100, 100, 100, 0, 200])
+        self.assertEqual(draws[3][4], draws[2][4])  # 오른쪽 해제 후 위쪽만 이동.
+        self.assertEqual(draws[5][4:], draws[4][4:])  # 포커스 해제 후 정지.
+        fake.open_canvas.assert_called_once_with(TUK_WIDTH, TUK_HEIGHT)
+        fake.close_canvas.assert_called_once()
+        for exit_event in (event(1, 14), event(0)):
+            fake.get_events.side_effect = [[exit_event]]
+            fake.close_canvas.reset_mock()
+            with patch.dict(sys.modules, {'pico2d': fake}):
+                app.main()
+            fake.close_canvas.assert_called_once()
+        fake.load_image.side_effect = OSError('이미지 로드 실패')
+        fake.close_canvas.reset_mock()
+        with patch.dict(sys.modules, {'pico2d': fake}), self.assertRaises(OSError):
+            app.main()
+        fake.close_canvas.assert_called_once()
+        fake.open_canvas.reset_mock()
+        with patch.dict(sys.modules, {'pico2d': fake}), patch.object(
+            app, 'ASSET_DIR', app.ASSET_DIR / 'missing'
+        ), self.assertRaisesRegex(FileNotFoundError, 'TUK_GROUND.png'):
+            app.main()
+        fake.open_canvas.assert_not_called()
 
 
 if __name__ == '__main__':
