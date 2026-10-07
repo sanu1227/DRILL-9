@@ -16,6 +16,6 @@ python DRILL_09/move_character_with_key.py
 
 ## 제출
 
-요청한 원격: https://github.com/sanu1227/2D-GP_DRILL.git
+저장소 이름: `DRILL-9` (GitHub에서 공백 대신 하이픈 사용)
 
-첨부 안내의 저장소 이름은 `DRILL 9`입니다. 현재 원격 이름과 다르므로 제출 전에 확인하세요.
+제출 URL: https://github.com/sanu1227/DRILL-9.git
