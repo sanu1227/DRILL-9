@@ -11,6 +11,8 @@ MOVE_SPEED = 200.0
 MAX_DELTA = 0.05
 FRAME_INTERVAL = 0.1
 FRAME_COUNT = 8
+CELL_SIZE = 100
+HALF_SIZE = CELL_SIZE / 2
 
 ASSET_DIR = Path(__file__).resolve().parent
 
@@ -36,8 +38,8 @@ class Boy:
         length = hypot(dx, dy)
         if length:
             dx, dy = dx / length, dy / length
-        self.x = max(50, min(TUK_WIDTH - 50, self.x + dx * MOVE_SPEED * dt))
-        self.y = max(50, min(TUK_HEIGHT - 50, self.y + dy * MOVE_SPEED * dt))
+        self.x = max(HALF_SIZE, min(TUK_WIDTH - HALF_SIZE, self.x + dx * MOVE_SPEED * dt))
+        self.y = max(HALF_SIZE, min(TUK_HEIGHT - HALF_SIZE, self.y + dy * MOVE_SPEED * dt))
 
         if previous_state != (self.moving, self.facing):
             self.frame = 0
@@ -98,7 +100,10 @@ def main():
             previous_time = current_time
             p2.clear_canvas()
             tuk_ground.draw(TUK_WIDTH // 2, TUK_HEIGHT // 2)
-            character.clip_draw(boy.frame * 100, boy.sprite_row * 100, 100, 100, boy.x, boy.y)
+            character.clip_draw(
+                boy.frame * CELL_SIZE, boy.sprite_row * CELL_SIZE,
+                CELL_SIZE, CELL_SIZE, boy.x, boy.y,
+            )
             p2.update_canvas()
             p2.delay(0.005)
     finally:
