@@ -18,7 +18,9 @@ class Boy:
 
     def update(self):
         dx = int('right' in self.keys) - int('left' in self.keys)
+        dy = int('up' in self.keys) - int('down' in self.keys)
         self.x += dx * 10
+        self.y += dy * 10
 
 
 def main():
@@ -29,7 +31,10 @@ def main():
     character = p2.load_image(str(ASSET_DIR / 'animation_sheet.png'))
     running = True
     boy = Boy()
-    key_names = {p2.SDLK_RIGHT: 'right', p2.SDLK_LEFT: 'left'}
+    key_names = {
+        p2.SDLK_RIGHT: 'right', p2.SDLK_LEFT: 'left',
+        p2.SDLK_UP: 'up', p2.SDLK_DOWN: 'down',
+    }
 
     def handle_events():
         nonlocal running
