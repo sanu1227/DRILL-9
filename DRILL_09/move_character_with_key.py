@@ -84,6 +84,8 @@ def main():
     while running:
         handle_events()
         current_time = perf_counter()
+        if not p2.SDL_GetKeyboardFocus():
+            boy.keys.clear()
         boy.update(current_time - previous_time)
         previous_time = current_time
         p2.clear_canvas()
